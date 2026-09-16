@@ -278,4 +278,13 @@ def health_check() -> dict[str, Any]:
 init_db()
 
 if __name__ == "__main__":
-    mcp.run(transport=os.getenv("MCP_TRANSPORT", "stdio"))
+    transport = os.getenv("MCP_TRANSPORT", "stdio").strip().lower()
+    if transport in {"streamable-http", "streamable_http", "http"}:
+        # FastMCP reads these settings when run() starts. They are deliberately
+        # environment-driven so the same image works on Render, Railway, Docker,
+        # or a private VM without source changes.
+        mcp.settings.host = os.getenv("MCP_HOST", "0.0.0.0")
+        mcp.settings.port = int(os.getenv("PORT", os.getenv("MCP_PORT", "8000")))
+        mcp.run(transport="streamable-http")
+    else:
+        mcp.run(transport="stdio")
