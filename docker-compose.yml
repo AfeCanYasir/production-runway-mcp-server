@@ -1,0 +1,17 @@
+services:
+  runway-mcp:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      RUNWAYML_API_SECRET: ${RUNWAYML_API_SECRET}
+      MCP_TRANSPORT: streamable-http
+      MCP_HOST: 0.0.0.0
+      PORT: 8000
+      VIDEO_TASKS_DB: /data/video_tasks.db
+    volumes:
+      - runway_data:/data
+
+volumes:
+  runway_data:
